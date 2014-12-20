@@ -31,14 +31,13 @@ categories:
 ##三、临时性分支
 	前面讲到版本库的两条主要分支：Master和Develop。前者用于正式发布，后者用于日常开发。其实，常设分支只需要这两条就够了，不需要其他了。
 	但是，除了常设分支以外，还有一些临时性分支，用于应对一些特定目的的版本开发。临时性分支主要有三种：
-*	功能（feature）分支
-*	预发布（release）分支
-*	修补bug（fixbug）分支
+	*功能（feature）分支
+	*预发布（release）分支
+	*修补bug（fixbug）分支
 	这三种分支都属于临时性需要，使用完以后，应该删除，使得代码库的常设分支始终只有Master和Develop。
 ##四、功能分支
 	接下来，一个个来看这三种"临时性分支"。
 	第一种是功能分支，它是为了开发某种特定功能，从Develop分支上面分出来的。开发完成后，要再并入Develop。
- 
 	功能分支的名字，可以采用feature-*的形式命名。
 	创建一个功能分支：
 	git checkout -b feature-x
@@ -65,7 +64,6 @@ categories:
 ##六、修补bug分支
 	最后一种是修补bug分支。软件正式发布以后，难免会出现bug。这时就需要创建一个分支，进行bug修补。
 	修补bug分支是从Master分支上面分出来的。修补结束以后，再合并进Master和Develop分支。它的命名，可以采用fixbug-*的形式。
- 
 	创建一个修补bug分支：
 	git checkout -b fixbug-0.1
 	修补结束后，合并到master分支：
