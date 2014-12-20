@@ -10,7 +10,7 @@
 
   
   <meta name="description" content=" Blog Archive 2014 Git分支管理
-Dec 20 2014 Included file 'asides/category_list.html' not found in _includes directory 最近评论 ">
+Dec 20 2014 分类 \{\% category_list \%\} //此处去掉四个'\' 最近评论 ">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -96,7 +96,12 @@ Dec 20 2014 Included file 'asides/category_list.html' not found in _includes dir
 
 <aside class="sidebar">
   
-    Included file &#8216;asides/category_list.html&#8217; not found in _includes directory<section>
+    <section>
+<h1>分类</h1>
+<ul id="categories">
+   \{\% category_list \%\} //此处去掉四个&#8217;&#39;
+</ul>
+</section>  <section>
 <h1>最近评论</h1>
 <ul class="ds-recent-comments" data-num-items="10">
 </ul>
