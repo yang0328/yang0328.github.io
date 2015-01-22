@@ -3,7 +3,7 @@ layout: post
 title: "Git分支管理"
 date: 2014-12-20 05:53:12 -0500
 comments: true
-categories: 
+categories: git
 ---
 ##一、主分支Master
 	首先，代码库应该有一个、且仅有一个主分支。所有提供给用户使用的正式版本，都在这个主分支上发布。
