@@ -4,7 +4,7 @@
   <title><![CDATA[Sam Yang博客]]></title>
   <link href="http://yang0328.github.io/atom.xml" rel="self"/>
   <link href="http://yang0328.github.io/"/>
-  <updated>2015-01-22T09:53:42-05:00</updated>
+  <updated>2015-01-26T03:41:10-05:00</updated>
   <id>http://yang0328.github.io/</id>
   <author>
     <name><![CDATA[Sam Yang]]></name>
@@ -12,6 +12,326 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Rpm-gpg]]></title>
+    <link href="http://yang0328.github.io/blog/2015/01/26/rpm-gpg/"/>
+    <updated>2015-01-26T03:37:41-05:00</updated>
+    <id>http://yang0328.github.io/blog/2015/01/26/rpm-gpg</id>
+    <content type="html"><![CDATA[<p>我们自己制作的rpm包，为了防止被篡改，一般要使用私钥进行签名，然后将公钥广而告之，下载使用软件包的话，可以通过公钥进行验证签名，从而确保文件的原始性。</p>
+
+<h1>1、查询工具包是否安装</h1>
+
+<pre><code>#whereis gpg
+gpg: /usr/bin/gpg /usr/share/man/man1/gpg.1.gz
+# rpm -qf /usr/bin/gpg
+gnupg2-2.0.14-4.el6.x86_64
+</code></pre>
+
+<p>得出已经安装，由gnupg管理</p>
+
+<h1>2、自己知道了一个rpm包：qemu-img；还没签名，我们现在安装试试会出现什么</h1>
+
+<pre><code># yum --disablerepo=\* --enablerepo=c6-media install qemu-img
+Loaded plugins: fastestmirror, refresh-packagekit
+Loading mirror speeds from cached hostfile
+ * c6-media:
+Setting up Install Process
+Resolving Dependencies
+--&gt; Running transaction check
+---&gt; Package qemu-img.x86_64 2:0.12.1.2-2.113.el6 set to be updated
+--&gt; Finished Dependency Resolution
+
+Dependencies Resolved
+
+================================================================================
+ Package        Arch         Version                       Repository      Size
+================================================================================
+Installing:
+ qemu-img       x86_64       2:0.12.1.2-2.113.el6          c6-media       343 k
+
+Transaction Summary
+================================================================================
+Install       1 Package(s)
+Upgrade       0 Package(s)
+
+Total download size: 343 k
+Installed size: 597 k
+Is this ok [y/N]: y
+Downloading Packages:
+
+
+Package qemu-img-0.12.1.2-2.113.el6.x86_64.rpm is not signed
+</code></pre>
+
+<p>对，就是报此rpm包没有签名；解决方法有，修改/etc/yum.repos.d/CentOS-Media.repo中gpgcheck=0不验证包，但这不是我们要的结果</p>
+
+<h1>3、查询系统是否包含gpg key</h1>
+
+<pre><code># gpg --list-key
+</code></pre>
+
+<p>没有任何输出</p>
+
+<h1>4、正式开始签名</h1>
+
+<pre><code># gpg --gen-key
+gpg (GnuPG) 2.0.14; Copyright (C) 2009 Free Software Foundation, Inc.
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+
+gpg: keyring `/root/.gnupg/secring.gpg' created
+Please select what kind of key you want:
+(1) RSA and RSA (default)
+(2) DSA and Elgamal
+(3) DSA (sign only)
+(4) RSA (sign only)
+Your selection? 4                                       #RSA比较流行
+RSA keys may be between 1024 and 4096 bits long.
+What keysize do you want? (2048)                        #直接回车
+Requested keysize is 2048 bits
+Please specify how long the key should be valid.
+     0 = key does not expire
+   = key expires in n days
+  w = key expires in n weeks
+  m = key expires in n months
+  y = key expires in n years
+Key is valid for? (0)                                    #0代表永不过期
+Key does not expire at all
+Is this correct? (y/N) y                                 #确认
+
+GnuPG needs to construct a user ID to identify your key.
+
+Real name: ecdata                                        #姓名
+Email address: qiujichun@gmail.com                       #邮箱
+Comment: custom                                          #注释
+You selected this USER-ID:
+"ecdata (custom) "
+
+Change (N)ame, (C)omment, (E)mail or (O)kay/(Q)uit? O    #大些字母O，确认
+
+                                   lqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqk
+                                   x Enter passphrase                                    x
+                                   x                                                     x
+                                   x                                                     x
+                                   x Passphrase ***********_____________________________ x输入密码
+                                   x                                                     x
+                                   x                                       x
+                                   mqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqj
+
+
+                                   lqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqk
+                                   x Please re-enter this passphrase                     x
+                                   x                                                     x
+                                   x Passphrase ***********_____________________________ x再次输入
+                                   x                                                     x
+                                   x                                       x
+                                   mqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqj
+
+
+
+can't connect to `/root/.gnupg/S.gpg-agent': No such file or directory
+We need to generate a lot of random bytes. It is a good idea to perform
+some other action (type on the keyboard, move the mouse, utilize the
+disks) during the prime generation; this gives the random number
+generator a better chance to gain enough entropy.
+
+此时应该多移动鼠标、敲键盘，生成足够多的随机数，或直接另一终端执行du /等命令
+gpg: key 8CD0BA9F marked as ultimately trusted
+public and secret key created and signed.
+
+gpg: checking the trustdb
+gpg: 3 marginal(s) needed, 1 complete(s) needed, PGP trust model
+gpg: depth: 0  valid:   1  signed:   0  trust: 0-, 0q, 0n, 0m, 0f, 1u
+pub   2048R/8CD0BA9F 2011-12-21
+  Key fingerprint = 6245 8B36 E982 2920 1A54  BA1C 10DE 1087 8CD0 BA9F
+uid                  ecdata (custom)
+
+Note that this key cannot be used for encryption.  You may want to use
+the command "--edit-key" to generate a subkey for this purpose.
+可以了，此时可能需要添加个“subkey”
+
+# gpg --edit-key ecdata    此为刚key的name
+Command&gt; help   查询到用addkey命令
+    addkey      add a subkey
+Command&gt; addkey
+                    lqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqk
+                    x Please enter the passphrase to unlock the secret key for the OpenPGP certificate:  x
+                    x "ecdata (custom) "                                            x
+                    x 2048-bit RSA key, ID 8CD0BA9F,                                                     x
+                    x created 2011-12-21.                                                                x
+                    x                                                                                    x
+                    x                                                                                    x
+                    x Passphrase ***********____________________________________________________________ x
+                    x                                                                                    x
+                    x                                                                        x
+                    mqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqj此为以后解刚secret key所用
+
+Please select what kind of key you want:
+(3) DSA (sign only)
+(4) RSA (sign only)
+(5) Elgamal (encrypt only)
+(6) RSA (encrypt only)
+Your selection? 6
+RSA keys may be between 1024 and 4096 bits long.
+What keysize do you want? (2048)
+Requested keysize is 2048 bits
+Please specify how long the key should be valid.
+     0 = key does not expire
+   = key expires in n days
+  w = key expires in n weeks
+  m = key expires in n months
+  y = key expires in n years
+Key is valid for? (0) 0
+Key does not expire at all
+Is this correct? (y/N) y
+Really create? (y/N) y
+We need to generate a lot of random bytes. It is a good idea to perform
+some other action (type on the keyboard, move the mouse, utilize the
+disks) during the prime generation; this gives the random number
+generator a better chance to gain enough entropy.
+
+---------------------疯狂移动鼠标吧（如果嫌烦，直接循环代劳 # for (( a=1;a&lt;=1000;a++ ));do du /;done ）
+pub  2048R/8CD0BA9F  created: 2011-12-21  expires: never       usage: SC
+                 trust: ultimate      validity: ultimate
+sub  2048R/1E6D98D0  created: 2011-12-21  expires: never       usage: E
+[ultimate] (1). ecdata (custom)
+Command&gt; save
+</code></pre>
+
+<p>可以了</p>
+
+<h1>5、查看下成果</h1>
+
+<pre><code># gpg --list-key
+/root/.gnupg/pubring.gpg
+------------------------
+pub   2048R/8CD0BA9F 2011-12-21
+uid                  ecdata (custom)
+sub   2048R/1E6D98D0 2011-12-21
+</code></pre>
+
+<h1>6、修改rpm宏，使用我们的密钥对：</h1>
+
+<p>引用
+    # echo %<em>signature gpg >> ~/.rpmmacros
+    # echo &ldquo;%</em>gpg_name ecdata (custom)&rdquo; >> ~/.rpmmacros</p>
+
+<h1>7、对已有rpm软件包进行签名：</h1>
+
+<pre><code># rpm --addsign /media/CentOS/Packages/qemu-img-0.12.1.2-2.113.el6.x86_64.rpm
+Enter pass phrase:                输入刚制作密钥对的密码
+Pass phrase is good.
+/media/CentOS/Packages/qemu-img-0.12.1.2-2.113.el6.x86_64.rpm:
+
++++++++++在rpmbuild打包时签名：
+</code></pre>
+
+<p>引用
+    # rpmbuild &ndash;sign &ndash;ta hello-0.1-1.tar.gz</p>
+
+<pre><code>+++++++++
+</code></pre>
+
+<h1>8、我们先将gpg产生的公钥导出到一个文件，然后将这个公钥文件导入到RPM数据库里，然后使用rpm命令进行检验。</h1>
+
+<p>如果不先导入到rpm数据库，验证结果是这样的
+    # rpm -K /media/CentOS/Packages/qemu-img-0.12.1.2-2.113.el6.x86_64.rpm
+    /media/CentOS/Packages/qemu-img-0.12.1.2-2.113.el6.x86_64.rpm: RSA sha1 ((MD5) PGP) md5 NOT OK (MISSING KEYS: (MD5) PGP#8cd0ba9f)</p>
+
+<p>导出公钥到一个文本文档：</p>
+
+<p>引用
+    # gpg &ndash;export -a &ldquo;ecdata (custom)&rdquo; > RPM-GPG-KEY-ECDATA</p>
+
+<p>查看rpm数据库中已有的公钥：</p>
+
+<p>引用
+    # rpm -q gpg-pubkey-<em>
+    package gpg-pubkey-</em> is not installed
+    # rpm &ndash;import RPM-GPG-KEY-ECDATA
+    # rpm -q gpg-pubkey-*
+    gpg-pubkey-8cd0ba9f-4ef12761    这是上步导入的</p>
+
+<p>现在再来验证下RPM包
+    # rpm -K /media/CentOS/Packages/qemu-img-0.12.1.2-2.113.el6.x86_64.rpm
+    /media/CentOS/Packages/qemu-img-0.12.1.2-2.113.el6.x86_64.rpm: rsa sha1 (md5) pgp md5 OK</p>
+
+<h1>9、安装</h1>
+
+<pre><code># rpm -ivh Packages/qemu-img-0.12.1.2-2.113.el6.x86_64.rpm
+Preparing...                ########################################### [100%]
+1:qemu-img               ########################################### [100%]
+没有报类似警告
+warning: qemu-img-0.12.1.2-2.113.el6.x86_64.rpm: Header V3 RSA/SHA1 signature: NOKEY, key ID c0eb63c7 
+</code></pre>
+
+<p>但是此时yum安装还不行，继续（注意顺序）
+    # cp RPM-GPG-KEY-ECDATA /etc/pki/rpm-gpg/</p>
+
+<pre><code># createrepo -g repodata/comps.xml .
+
+# cat /etc/yum.repos.d/CentOS-Media.repo  添加修改如下
+............................
+enabled=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6
+   file:///etc/pki/rpm-gpg/RPM-GPG-KEY-ECDATA
+
+# yum clean all
+
+# yum --disablerepo=\* --enablerepo=c6-media install qemu-img
+Loaded plugins: fastestmirror, refresh-packagekit
+Determining fastest mirrors
+* c6-media:
+c6-media                                                                                                       | 1.9 kB     00:00 ...
+c6-media/primary                                                                                               | 1.7 MB     00:00 ...
+c6-media                                                                                                                    3696/3696
+Setting up Install Process
+Resolving Dependencies
+--&gt; Running transaction check
+---&gt; Package qemu-img.x86_64 2:0.12.1.2-2.113.el6 set to be updated
+--&gt; Finished Dependency Resolution
+
+Dependencies Resolved
+
+======================================================================================================================================
+ Package                      Arch                       Version                                   Repository                    Size
+======================================================================================================================================
+Installing:
+ qemu-img                     x86_64                     2:0.12.1.2-2.113.el6                      c6-media                     344 k
+
+Transaction Summary
+===========================================================================================================================
+Install       1 Package(s)
+Upgrade       0 Package(s)
+
+Total download size: 344 k
+Installed size: 597 k
+Is this ok [y/N]: y
+Downloading Packages:
+Running rpm_check_debug
+Running Transaction Test
+Transaction Test Succeeded
+Running Transaction
+  Installing     : 2:qemu-img-0.12.1.2-2.113.el6.x86_64                                                                           1/1
+
+Installed:
+  qemu-img.x86_64 2:0.12.1.2-2.113.el6
+
+Complete!
+</code></pre>
+
+<p>完成</p>
+
+<h1>10、对其他自定义的rpm继续签名</h1>
+
+<pre><code># rpm --resign Packages/qemu-kvm-0.12.1.2-2.113.el6.x86_64.rpm
+</code></pre>
+
+<p>再次（必须）
+    # createrepo -g repodata/comps.xml .</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Gitlab迁移]]></title>
