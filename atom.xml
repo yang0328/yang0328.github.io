@@ -4,7 +4,7 @@
   <title><![CDATA[Sam Yang博客]]></title>
   <link href="http://yang0328.github.io/atom.xml" rel="self"/>
   <link href="http://yang0328.github.io/"/>
-  <updated>2015-01-26T03:45:49-05:00</updated>
+  <updated>2015-01-26T03:48:12-05:00</updated>
   <id>http://yang0328.github.io/</id>
   <author>
     <name><![CDATA[Sam Yang]]></name>
@@ -14,7 +14,7 @@
 
   
   <entry>
-    <title type="html"><![CDATA[Rpm-gpg]]></title>
+    <title type="html"><![CDATA[给rpm包制作签名]]></title>
     <link href="http://yang0328.github.io/blog/2015/01/26/rpm-gpg/"/>
     <updated>2015-01-26T03:37:41-05:00</updated>
     <id>http://yang0328.github.io/blog/2015/01/26/rpm-gpg</id>
@@ -248,7 +248,7 @@ package gpg-pubkey-* is not installed
 gpg-pubkey-8cd0ba9f-4ef12761    这是上步导入的
 </code></pre>
 
-<p>现在再来验证下RPM包
+<p> 现在再来验证下RPM包
     # rpm -K /media/CentOS/Packages/qemu-img-0.12.1.2-2.113.el6.x86_64.rpm
     /media/CentOS/Packages/qemu-img-0.12.1.2-2.113.el6.x86_64.rpm: rsa sha1 (md5) pgp md5 OK</p>
 
