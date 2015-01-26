@@ -307,19 +307,17 @@ Pass phrase is good.
     # rpm -K /media/CentOS/Packages/qemu-img-0.12.1.2-2.113.el6.x86_64.rpm
     /media/CentOS/Packages/qemu-img-0.12.1.2-2.113.el6.x86_64.rpm: RSA sha1 ((MD5) PGP) md5 NOT OK (MISSING KEYS: (MD5) PGP#8cd0ba9f)</p>
 
-<p>导出公钥到一个文本文档：</p>
-
-<p>引用
+<p>导出公钥到一个文本文档：
     # gpg &ndash;export -a &ldquo;ecdata (custom)&rdquo; > RPM-GPG-KEY-ECDATA</p>
 
 <p>查看rpm数据库中已有的公钥：</p>
 
-<p>引用
-    # rpm -q gpg-pubkey-<em>
-    package gpg-pubkey-</em> is not installed
-    # rpm &ndash;import RPM-GPG-KEY-ECDATA
-    # rpm -q gpg-pubkey-*
-    gpg-pubkey-8cd0ba9f-4ef12761    这是上步导入的</p>
+<pre><code># rpm -q gpg-pubkey-*
+package gpg-pubkey-* is not installed
+# rpm --import RPM-GPG-KEY-ECDATA
+# rpm -q gpg-pubkey-*
+gpg-pubkey-8cd0ba9f-4ef12761    这是上步导入的
+</code></pre>
 
 <p>现在再来验证下RPM包
     # rpm -K /media/CentOS/Packages/qemu-img-0.12.1.2-2.113.el6.x86_64.rpm
@@ -394,10 +392,9 @@ Complete!
 <h1>10、对其他自定义的rpm继续签名</h1>
 
 <pre><code># rpm --resign Packages/qemu-kvm-0.12.1.2-2.113.el6.x86_64.rpm
+再次（必须）
+# createrepo -g repodata/comps.xml .
 </code></pre>
-
-<p>再次（必须）
-    # createrepo -g repodata/comps.xml .</p>
 </div>
   
   
