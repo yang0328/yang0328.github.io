@@ -304,19 +304,21 @@ Pass phrase is good.
     # rpm -K /media/CentOS/Packages/qemu-img-0.12.1.2-2.113.el6.x86_64.rpm
     /media/CentOS/Packages/qemu-img-0.12.1.2-2.113.el6.x86_64.rpm: RSA sha1 ((MD5) PGP) md5 NOT OK (MISSING KEYS: (MD5) PGP#8cd0ba9f)</p>
 
-<p>导出公钥到一个文本文档：
+<p>导出公钥到一个文本文档：</p>
+
+<p>引用
     # gpg &ndash;export -a &ldquo;ecdata (custom)&rdquo; > RPM-GPG-KEY-ECDATA</p>
 
 <p>查看rpm数据库中已有的公钥：</p>
 
-<pre><code># rpm -q gpg-pubkey-*
-package gpg-pubkey-* is not installed
-# rpm --import RPM-GPG-KEY-ECDATA
-# rpm -q gpg-pubkey-*
-gpg-pubkey-8cd0ba9f-4ef12761    这是上步导入的
-</code></pre>
+<p>引用
+    # rpm -q gpg-pubkey-<em>
+    package gpg-pubkey-</em> is not installed
+    # rpm &ndash;import RPM-GPG-KEY-ECDATA
+    # rpm -q gpg-pubkey-*
+    gpg-pubkey-8cd0ba9f-4ef12761    这是上步导入的</p>
 
-<p> 现在再来验证下RPM包
+<p>现在再来验证下RPM包
     # rpm -K /media/CentOS/Packages/qemu-img-0.12.1.2-2.113.el6.x86_64.rpm
     /media/CentOS/Packages/qemu-img-0.12.1.2-2.113.el6.x86_64.rpm: rsa sha1 (md5) pgp md5 OK</p>
 
