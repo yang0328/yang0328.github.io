@@ -4,7 +4,7 @@
   <title><![CDATA[Sam Yang博客]]></title>
   <link href="http://yang0328.github.io/atom.xml" rel="self"/>
   <link href="http://yang0328.github.io/"/>
-  <updated>2015-01-26T03:41:10-05:00</updated>
+  <updated>2015-01-26T03:45:49-05:00</updated>
   <id>http://yang0328.github.io/</id>
   <author>
     <name><![CDATA[Sam Yang]]></name>
@@ -213,9 +213,9 @@ sub   2048R/1E6D98D0 2011-12-21
 
 <h1>6、修改rpm宏，使用我们的密钥对：</h1>
 
-<p>引用
-    # echo %<em>signature gpg >> ~/.rpmmacros
-    # echo &ldquo;%</em>gpg_name ecdata (custom)&rdquo; >> ~/.rpmmacros</p>
+<pre><code># echo %_signature gpg &gt;&gt; ~/.rpmmacros
+# echo "%_gpg_name ecdata (custom)" &gt;&gt; ~/.rpmmacros
+</code></pre>
 
 <h1>7、对已有rpm软件包进行签名：</h1>
 
@@ -225,12 +225,9 @@ Pass phrase is good.
 /media/CentOS/Packages/qemu-img-0.12.1.2-2.113.el6.x86_64.rpm:
 
 +++++++++在rpmbuild打包时签名：
-</code></pre>
 
-<p>引用
-    # rpmbuild &ndash;sign &ndash;ta hello-0.1-1.tar.gz</p>
-
-<pre><code>+++++++++
+# rpmbuild --sign --ta hello-0.1-1.tar.gz
++++++++++
 </code></pre>
 
 <h1>8、我们先将gpg产生的公钥导出到一个文件，然后将这个公钥文件导入到RPM数据库里，然后使用rpm命令进行检验。</h1>
@@ -239,19 +236,17 @@ Pass phrase is good.
     # rpm -K /media/CentOS/Packages/qemu-img-0.12.1.2-2.113.el6.x86_64.rpm
     /media/CentOS/Packages/qemu-img-0.12.1.2-2.113.el6.x86_64.rpm: RSA sha1 ((MD5) PGP) md5 NOT OK (MISSING KEYS: (MD5) PGP#8cd0ba9f)</p>
 
-<p>导出公钥到一个文本文档：</p>
-
-<p>引用
+<p>导出公钥到一个文本文档：
     # gpg &ndash;export -a &ldquo;ecdata (custom)&rdquo; > RPM-GPG-KEY-ECDATA</p>
 
 <p>查看rpm数据库中已有的公钥：</p>
 
-<p>引用
-    # rpm -q gpg-pubkey-<em>
-    package gpg-pubkey-</em> is not installed
-    # rpm &ndash;import RPM-GPG-KEY-ECDATA
-    # rpm -q gpg-pubkey-*
-    gpg-pubkey-8cd0ba9f-4ef12761    这是上步导入的</p>
+<pre><code># rpm -q gpg-pubkey-*
+package gpg-pubkey-* is not installed
+# rpm --import RPM-GPG-KEY-ECDATA
+# rpm -q gpg-pubkey-*
+gpg-pubkey-8cd0ba9f-4ef12761    这是上步导入的
+</code></pre>
 
 <p>现在再来验证下RPM包
     # rpm -K /media/CentOS/Packages/qemu-img-0.12.1.2-2.113.el6.x86_64.rpm
